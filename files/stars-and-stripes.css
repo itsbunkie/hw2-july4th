@@ -1,0 +1,388 @@
+/* Core palette from the assignment brief, plus two tonal extensions (dawn/harbor) derived from it for the sky gradients */
+:root {
+  --patriot-blue: #002868;
+  --liberty-red: #bf0a30;
+  --star-gold: #ffd700;
+  --cannon-smoke: #1a1a2e;
+  --parchment: #f5f0e8;
+  --dawn-peach: #ffb37b;   /* warms the sunrise hero without adding a new unrelated hue */
+  --harbor-navy: #00102b;  /* darker than cannon-smoke, used only for the night hero background */
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 2rem;
+  --space-5: 4rem;
+
+  --font-display: "Bebas Neue", Impact, sans-serif;
+  --font-body: "Open Sans", "Segoe UI", sans-serif;
+
+  --radius: 14px;
+  --ease-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1); /* the "natural" bounce curve used across the storybook */
+}
+
+/* A generous reset keeps every browser's default spacing from fighting the grid/flex layouts below */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--parchment);
+  color: var(--cannon-smoke);
+  line-height: 1.5;
+}
+
+/* Visually hidden until focused, so keyboard users get an escape hatch from the sticky nav */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: auto;
+  background: var(--parchment);
+  color: var(--patriot-blue);
+  padding: var(--space-2) var(--space-3);
+  z-index: 100;
+}
+.skip-link:focus {
+  left: var(--space-3);
+  top: var(--space-3);
+}
+
+/* Shared focus style so every interactive element (links, labels acting as buttons, radios) stays keyboard-visible */
+a:focus-visible,
+label:focus-within,
+input:focus-visible {
+  outline: 3px solid var(--star-gold);
+  outline-offset: 3px;
+}
+
+.site-header {
+  position: sticky; /* keeps chapter navigation reachable without scrolling back up */
+  top: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--patriot-blue);
+  color: var(--parchment);
+  border-bottom: 4px solid var(--liberty-red);
+}
+
+.logo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+}
+.logo-star {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  margin-right: var(--space-2);
+  vertical-align: -4px;
+  background: url("assets/images/star.png") center / contain no-repeat;
+  animation: sparkle 2.4s ease-in-out infinite; /* small ambient life on the wordmark, cheap because it's transform-only */
+}
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.site-nav a {
+  color: var(--parchment);
+  text-decoration: none;
+  font-weight: 600;
+  padding-bottom: var(--space-1);
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s ease, color 0.2s ease; /* border/color are cheap enough here since nothing else on the page depends on this element's layout */
+}
+.site-nav a:hover,
+.site-nav a:focus-visible {
+  border-color: var(--star-gold);
+  color: var(--star-gold);
+}
+
+/* This is the CSS-only router. Every .page is hidden by default; whichever one matches the URL's #hash
+   becomes the browser's :target and is shown. #page1 additionally gets its own display rule so the
+   storybook opens on Chapter One even before any link has been clicked (i.e. no hash present yet). */
+.page { display: none; }
+#page1 { display: block; }
+.page:target { display: block !important; } /* !important guarantees the targeted chapter always wins over the #page1 default rule above */
+.storybook:has(.page:target) #page1:not(:target) { display: none !important; } /* once ANY chapter is targeted, fall back to hiding the untargeted default */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-5) var(--space-4);
+  text-align: center;
+  color: var(--parchment);
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 9vw, 5.5rem); /* scales the display type by viewport instead of relying on separate breakpoints */
+  line-height: 0.95;
+  margin: 0 0 var(--space-3);
+  text-shadow: 0 3px 0 rgba(0,0,0,0.25);
+}
+.hero-sub {
+  max-width: 34rem;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  opacity: 0.95;
+}
+
+.hero--dawn {
+  background: linear-gradient(180deg, var(--dawn-peach) 0%, var(--liberty-red) 55%, var(--patriot-blue) 100%);
+}
+.hero--plaza {
+  background: linear-gradient(180deg, #4a7fc9 0%, var(--patriot-blue) 100%);
+}
+.hero--night {
+  background: radial-gradient(ellipse at 50% 20%, var(--patriot-blue) 0%, var(--harbor-navy) 70%);
+}
+
+.sky { position: absolute; inset: 0; pointer-events: none; }
+.sun {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  width: 90px;
+  height: 90px;
+  background: url("assets/images/sun.png") center / contain no-repeat;
+  transform: translateX(-50%);
+}
+.flagpole { position: relative; height: 160px; margin: 0 auto var(--space-3); width: 90px; }
+.pole { position: absolute; left: 8px; bottom: 0; width: 6px; height: 100%; background: var(--parchment); border-radius: 3px; }
+.flag {
+  position: absolute;
+  left: 14px;
+  width: 70px;
+  height: 44px;
+  background: url("assets/images/flag.png") center / contain no-repeat; /* stripes + canton stars now live in the asset itself */
+  transform-origin: left center;
+  animation: rise-and-wave 3.5s var(--ease-overshoot) forwards, wave 2.4s ease-in-out 3.5s infinite; /* rises once, then waves forever */
+}
+@keyframes rise-and-wave {
+  from { transform: translateY(70px); }
+  to   { transform: translateY(0); }
+}
+@keyframes wave {
+  0%, 100% { transform: skewY(0deg); }
+  50%      { transform: skewY(-4deg); }
+}
+
+.interactive-block {
+  max-width: 46rem;
+  margin: var(--space-5) auto;
+  padding: 0 var(--space-4);
+  text-align: center;
+}
+.block-title { font-family: var(--font-display); font-size: 1.75rem; letter-spacing: 0.03em; color: var(--patriot-blue); margin-bottom: var(--space-2); }
+.block-copy { margin-bottom: var(--space-4); }
+.block-copy code { background: rgba(0,0,0,0.06); padding: 0 var(--space-1); border-radius: 4px; }
+
+/* Standard checkbox/radio-hack pattern: hide the native control but keep it in the accessibility tree and tab order */
+.visually-hidden-input {
+  position: absolute;
+  width: 1px; height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.toggle-btn, .pill-btn {
+  display: inline-block;
+  cursor: pointer;
+  font-weight: 700;
+  padding: var(--space-2) var(--space-4);
+  border-radius: 999px;
+  border: 2px solid var(--patriot-blue);
+  color: var(--patriot-blue);
+  background: var(--parchment);
+  transition: transform 0.2s var(--ease-overshoot), background 0.2s ease, color 0.2s ease; /* transform stays compositor-only even though background/color are also transitioning */
+}
+.toggle-btn:hover, .pill-btn:hover { transform: translateY(-2px); }
+/* :checked is the state-driver required by the brief — the label's own look changes when its input is checked */
+#sparkler-toggle:checked + .toggle-btn,
+#firework-toggle:checked + .toggle-btn {
+  background: var(--liberty-red);
+  color: var(--parchment);
+  border-color: var(--liberty-red);
+}
+
+.sparkler-stage { position: relative; height: 120px; margin-top: var(--space-4); }
+.stick { position: absolute; left: 50%; bottom: 0; width: 6px; height: 60px; background: #8a6d3b; transform: translateX(-50%); }
+.spark {
+  position: absolute;
+  top: 20px; left: 50%;
+  width: 14px; height: 14px;
+  background: url("assets/images/star.png") center / contain no-repeat;
+  opacity: 0; /* sparks stay invisible/paused until the checkbox is checked */
+  animation: sparkle 0.6s ease-in-out infinite;
+  animation-play-state: paused;
+}
+/* Each spark is nudged to a different angle with rotate + translateY so together they read as a starburst, not a single dot */
+.sp1 { transform: rotate(0deg) translateY(-30px);  animation-delay: 0s; }
+.sp2 { transform: rotate(90deg) translateY(-30px); animation-delay: 0.15s; }
+.sp3 { transform: rotate(180deg) translateY(-30px); animation-delay: 0.3s; }
+.sp4 { transform: rotate(270deg) translateY(-30px); animation-delay: 0.45s; }
+/* The general sibling combinator reaches from the checkbox into the stage that follows it in the markup */
+#sparkler-toggle:checked ~ .sparkler-stage .spark {
+  opacity: 1;
+  animation-play-state: running;
+}
+@keyframes sparkle {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50%      { transform: scale(1.6); opacity: 1; }
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* mobile-first: one column until the min-width breakpoint below */
+  gap: var(--space-3);
+  max-width: 64rem;
+  margin: var(--space-5) auto;
+  padding: 0 var(--space-4);
+}
+.card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  border-left: 6px solid var(--liberty-red);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  transition: transform 0.25s var(--ease-overshoot), box-shadow 0.25s ease; /* transform-driven hover lift; shadow just follows along for depth */
+}
+.card:hover, .card:focus-within {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.14);
+}
+.card h3 { margin-top: 0; font-family: var(--font-display); letter-spacing: 0.02em; color: var(--patriot-blue); font-size: 1.4rem; }
+.card--wide { border-left-color: var(--star-gold); }
+
+.parade-lane { position: relative; height: 70px; margin: var(--space-4) 0; overflow: hidden; }
+.float-emoji {
+  position: absolute;
+  top: 0;
+  left: -80px;
+  font-size: 2.2rem;
+  animation: parade-cross 9s linear infinite; /* translateX-only crossing keeps this on the GPU compositor thread */
+}
+.marcher    { animation-delay: 0s; }
+.flagbearer { animation-delay: 4.5s; font-size: 1.8rem; } /* offset by half the cycle so the two movers don't overlap on screen */
+@keyframes parade-cross {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(100vw + 160px)); }
+}
+
+.float-picker { max-width: 36rem; margin: 0 auto; }
+.pill-btn { margin: 0 var(--space-1) var(--space-3); }
+.float-panels { position: relative; text-align: left; background: #fff; border-radius: var(--radius); padding: var(--space-4); min-height: 4rem; }
+.panel { display: none; margin: 0; } /* only the panel matching the checked radio is shown */
+#float-1:checked ~ .float-panels .panel-1,
+#float-2:checked ~ .float-panels .panel-2,
+#float-3:checked ~ .float-panels .panel-3 {
+  display: block;
+}
+
+.stars-field { position: absolute; inset: 0; pointer-events: none; }
+.twinkle {
+  position: absolute;
+  width: 20px; height: 20px;
+  background: url("assets/images/star.png") center / contain no-repeat;
+  animation: sparkle 3s ease-in-out infinite;
+}
+.t1 { top: 15%; left: 20%; animation-delay: 0s; }
+.t2 { top: 22%; left: 70%; animation-delay: 1.2s; }
+
+.firework-stage { position: relative; height: 220px; margin-top: var(--space-4); }
+.rocket {
+  position: absolute;
+  bottom: 0; left: 50%;
+  width: 16px; height: 46px;
+  background: url("assets/images/rocket.png") center / contain no-repeat;
+  transform: translate(-50%, 0);
+  opacity: 0; /* stays invisible/paused until the launcher checkbox is checked, same pattern as the sparkler above */
+  animation: launch 1.8s ease-out infinite;
+  animation-play-state: paused;
+}
+/* burst.png stands in for the whole firework bloom: a soft radial burst image that scales up while fading out. */
+.burst {
+  position: absolute;
+  top: 20%; left: 50%;
+  width: 90px; height: 90px;
+  transform: translate(-50%, -50%) scale(0);
+  background: url("assets/images/burst.png") center / contain no-repeat;
+  opacity: 0;
+  animation: burst 1.8s ease-out infinite;
+  animation-play-state: paused;
+}
+#firework-toggle:checked ~ .firework-stage .rocket,
+#firework-toggle:checked ~ .firework-stage .burst {
+  opacity: 1;
+  animation-play-state: running;
+}
+@keyframes launch {
+  0%   { transform: translate(-50%, 0) scale(1); opacity: 1; }
+  35%  { transform: translate(-50%, -150px) scale(1); opacity: 1; }
+  36%  { opacity: 0; } /* rocket disappears exactly as the burst keyframe below begins, simulating the moment of ignition */
+  100% { opacity: 0; }
+}
+@keyframes burst {
+  0%, 34%  { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  45%      { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100%     { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+}
+
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  max-width: 64rem;
+  margin: var(--space-5) auto var(--space-4);
+  padding: 0 var(--space-4);
+  flex-wrap: wrap;
+}
+.page-nav a {
+  font-weight: 700;
+  color: var(--patriot-blue);
+  text-decoration: none;
+  padding: var(--space-2) var(--space-3);
+  border: 2px solid var(--patriot-blue);
+  border-radius: 999px;
+  transition: transform 0.2s var(--ease-overshoot), background 0.2s ease, color 0.2s ease;
+}
+.page-nav a:hover, .page-nav a:focus-visible {
+  background: var(--patriot-blue);
+  color: var(--parchment);
+  transform: translateY(-2px);
+}
+
+.site-footer {
+  text-align: center;
+  padding: var(--space-4);
+  background: var(--cannon-smoke);
+  color: var(--parchment);
+  font-size: 0.9rem;
+}
+.credit { opacity: 0.8; margin-top: var(--space-1); }
+
+/* Tablet and up: nav goes horizontal alongside the logo, and card grids gain columns since there's now room */
+@media (min-width: 700px) {
+  .site-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .card-grid { grid-template-columns: repeat(3, 1fr); }
+  .card--wide { grid-column: 1 / -1; }
+  .float-picker { text-align: center; }
+}
+
+/* This is the accessibility requirement from the brief: anyone with prefers-reduced-motion set gets a static page */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition: none !important;
+  }
+}
