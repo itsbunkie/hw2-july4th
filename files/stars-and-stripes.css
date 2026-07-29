@@ -80,7 +80,7 @@ input:focus-visible {
   height: 22px;
   margin-right: var(--space-2);
   vertical-align: -4px;
-  background: url("assets/images/star.png") center / contain no-repeat;
+  background: url("images/star.png") center / contain no-repeat;
   animation: sparkle 2.4s ease-in-out infinite; /* small ambient life on the wordmark, cheap because it's transform-only */
 }
 
@@ -149,7 +149,7 @@ input:focus-visible {
   left: 50%;
   width: 90px;
   height: 90px;
-  background: url("assets/images/sun.png") center / contain no-repeat;
+  background: url("images/sun.png") center / contain no-repeat;
   transform: translateX(-50%);
 }
 .flagpole { position: relative; height: 160px; margin: 0 auto var(--space-3); width: 90px; }
@@ -159,7 +159,7 @@ input:focus-visible {
   left: 14px;
   width: 70px;
   height: 44px;
-  background: url("assets/images/flag.png") center / contain no-repeat; /* stripes + canton stars now live in the asset itself */
+  background: url("images/flag.png") center / contain no-repeat; /* stripes + canton stars now live in the asset itself */
   transform-origin: left center;
   animation: rise-and-wave 3.5s var(--ease-overshoot) forwards, wave 2.4s ease-in-out 3.5s infinite; /* rises once, then waves forever */
 }
@@ -216,7 +216,7 @@ input:focus-visible {
   position: absolute;
   top: 20px; left: 50%;
   width: 14px; height: 14px;
-  background: url("assets/images/star.png") center / contain no-repeat;
+  background: url("images/star.png") center / contain no-repeat;
   opacity: 0; /* sparks stay invisible/paused until the checkbox is checked */
   animation: sparkle 0.6s ease-in-out infinite;
   animation-play-state: paused;
@@ -288,7 +288,7 @@ input:focus-visible {
 .twinkle {
   position: absolute;
   width: 20px; height: 20px;
-  background: url("assets/images/star.png") center / contain no-repeat;
+  background: url("images/star.png") center / contain no-repeat;
   animation: sparkle 3s ease-in-out infinite;
 }
 .t1 { top: 15%; left: 20%; animation-delay: 0s; }
@@ -299,7 +299,7 @@ input:focus-visible {
   position: absolute;
   bottom: 0; left: 50%;
   width: 16px; height: 46px;
-  background: url("assets/images/rocket.png") center / contain no-repeat;
+  background: url("images/rocket.png") center / contain no-repeat;
   transform: translate(-50%, 0);
   opacity: 0; /* stays invisible/paused until the launcher checkbox is checked, same pattern as the sparkler above */
   animation: launch 1.8s ease-out infinite;
@@ -311,7 +311,7 @@ input:focus-visible {
   top: 20%; left: 50%;
   width: 90px; height: 90px;
   transform: translate(-50%, -50%) scale(0);
-  background: url("assets/images/burst.png") center / contain no-repeat;
+  background: url("images/burst.png") center / contain no-repeat;
   opacity: 0;
   animation: burst 1.8s ease-out infinite;
   animation-play-state: paused;
